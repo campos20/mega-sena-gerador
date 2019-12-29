@@ -83,11 +83,18 @@ class Home extends Component {
       return false;
     }
 
+    numbers = numbers.map(Number);
+
     // 1 <= n <= 60
     let betweenLimits = numbers
       .map(n => n <= MEGA_SENA_MAX && n >= MEGA_SENA_MIN)
       .reduce((a, b) => a && b);
     if (!betweenLimits) {
+      return false;
+    }
+
+    // Duplications
+    if (new Set(numbers).size !== numbers.length) {
       return false;
     }
 
@@ -105,6 +112,7 @@ class Home extends Component {
             Incluir números fixos para aparecer nas apostas?{" "}
             <input
               id="fixed-input"
+              placeholder="1, 2, 3"
               onChange={this.handleFixedInputChange}
               className={this.state.fixedInput.isValid ? "" : "input-invalid"}
             ></input>
@@ -115,7 +123,6 @@ class Home extends Component {
   };
 
   handleShowOptions = () => {
-    console.log(this.state);
     let state = this.state;
     state.showOptions = !state.showOptions;
     this.setState(state);
@@ -251,6 +258,7 @@ class Home extends Component {
               Digite o valor da vaquinha: R${" "}
               <input
                 id="value-input"
+                size="6"
                 onChange={this.handleValueChange}
                 value={this.state.value}
               ></input>
