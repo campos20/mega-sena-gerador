@@ -2,17 +2,17 @@ import React, { Component } from "react";
 
 import "bootstrap/dist/css/bootstrap.css";
 
+import "./Home.css";
+
+import {
+  CHOICES_MIN,
+  CHOICES_MAX,
+  MEGA_SENA_MIN,
+  MEGA_SENA_MAX,
+  MEGA_SENA_VALUE
+} from "../constants/mega.sena.constants";
+
 import binomial from "../functions/math.utils";
-
-debugger;
-
-const CHOICES_MIN = 6;
-const CHOICES_MAX = 15;
-
-const MEGA_SENA_MIN = 1;
-const MEGA_SENA_MAX = 60;
-
-const MEGA_SENA_VALUE = 4.5; // R$ 4,50
 
 // For now, we do not allow very large values for bets, only about 100k.
 const maxBetValue =
@@ -63,6 +63,8 @@ class Home extends Component {
 
       let currentNumberOfBets = Math.floor(value / singleCost);
 
+      // i = 2 means 2 bets of 6 numbers (or 7, or whatever j is)
+      // We also restrict to not generate bets smaller than 6 choices.
       for (
         let i = 0;
         i < currentNumberOfBets && possibleNumbers.length > CHOICES_MIN;
@@ -97,18 +99,33 @@ class Home extends Component {
 
   render() {
     return (
-      <div>
-        <h1>Gerador Mega Sena</h1>
-        <p>Digite o valor da vaquinha</p>
-        <input
-          id="value-input"
-          onChange={this.handleValueChange}
-          value={this.state.value}
-        ></input>
-
-        <hr />
-
-        <button onClick={this.generate}>Gerar</button>
+      <div className="container">
+        <div className="row">
+          <div className="col-12" align="center">
+            <h1>Gerador Mega Sena</h1>
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-12" align="center">
+            <p>Digite o valor da vaquinha</p>
+          </div>
+        </div>
+        <div className="row">
+          <div className="col-12" align="center">
+            <input
+              id="value-input"
+              onChange={this.handleValueChange}
+              value={this.state.value}
+            ></input>
+          </div>
+        </div>
+        <div className="row" align="center">
+          <div className="col-12">
+            <button onClick={this.generate} className="btn btn-primary">
+              Gerar
+            </button>
+          </div>
+        </div>
 
         <div className="text-center">
           <table className="table table-striped table-bordered table-hover table-condensed">
