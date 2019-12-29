@@ -85,7 +85,13 @@ class Home extends Component {
         // Better presentation of numbers. Sort asc.
         choices.sort((a, b) => a - b);
 
-        bets.push({ choices: choices, cost: singleCost });
+        let distinctBets = binomial(j, CHOICES_MIN);
+
+        bets.push({
+          choices: choices,
+          cost: singleCost,
+          distinctBets: distinctBets
+        });
       }
 
       let currentCost = currentNumberOfBets * singleCost;
@@ -95,6 +101,59 @@ class Home extends Component {
     let state = this.state;
     state.bets = bets;
     this.setState(state);
+  };
+
+  showTable = () => {
+    if (this.state.bets.length === 0) {
+      return;
+    }
+
+    let totalCost = this.state.bets
+      .map(bet => bet.cost)
+      .reduce((a, b) => a + b, 0);
+
+    let distinctBets = this.state.bets
+      .map(bet => bet.distinctBets)
+      .reduce((a, b) => a + b, 0);
+
+    return (
+      <div className="text-center">
+        <table className="table table-striped table-bordered table-hover table-condensed">
+          <thead className="thead-dark">
+            <tr>
+              <th className="align-middle" scope="col">
+                Jogo
+              </th>
+              <th className="align-middle" scope="col">
+                Tamanho
+              </th>
+              <th>Jogos distintos</th>
+              <th className="align-middle" scope="col">
+                Custo
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {this.state.bets.map(bet => (
+              <tr key={bet.choices}>
+                <td>{bet.choices.join(", ")}</td>
+                <td>{bet.choices.length}</td>
+                <td>{bet.distinctBets}</td>
+                <td>{valueDisplay(bet.cost)}</td>
+              </tr>
+            ))}
+          </tbody>
+          <tfoot>
+            <tr>
+              <th></th>
+              <th>Total</th>
+              <th>{distinctBets}</th>
+              <th>{valueDisplay(totalCost)}</th>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    );
   };
 
   render() {
@@ -107,16 +166,14 @@ class Home extends Component {
         </div>
         <div className="row">
           <div className="col-12" align="center">
-            <p>Digite o valor da vaquinha</p>
-          </div>
-        </div>
-        <div className="row">
-          <div className="col-12" align="center">
-            <input
-              id="value-input"
-              onChange={this.handleValueChange}
-              value={this.state.value}
-            ></input>
+            <p>
+              Digite o valor da vaquinha: R${" "}
+              <input
+                id="value-input"
+                onChange={this.handleValueChange}
+                value={this.state.value}
+              ></input>
+            </p>
           </div>
         </div>
         <div className="row" align="center">
@@ -127,45 +184,7 @@ class Home extends Component {
           </div>
         </div>
 
-        <div className="text-center">
-          <table className="table table-striped table-bordered table-hover table-condensed">
-            <thead className="thead-dark">
-              <tr>
-                <th className="align-middle" scope="col">
-                  Tamanho
-                </th>
-                <th className="align-middle" scope="col">
-                  Jogo
-                </th>
-                <th className="align-middle" scope="col">
-                  Custo
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {this.state.bets.map(bet => (
-                <tr key={bet.choices}>
-                  <td>{bet.choices.length}</td>
-                  <td>{bet.choices.join(", ")}</td>
-                  <td>{valueDisplay(bet.cost)}</td>
-                </tr>
-              ))}
-            </tbody>
-            <tfoot>
-              <tr>
-                <th></th>
-                <th>Total</th>
-                <th>
-                  {valueDisplay(
-                    this.state.bets
-                      .map(bet => bet.cost)
-                      .reduce((a, b) => a + b, 0)
-                  )}
-                </th>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
+        {this.showTable()}
       </div>
     );
   }
