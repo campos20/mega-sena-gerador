@@ -25,14 +25,19 @@ class Home extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { value: 0, bets: [] };
+    this.state = {
+      value: 0,
+      bets: [],
+      fixedInput: { numbers: [], isValid: true },
+      showOptions: false
+    };
   }
 
   handleValueChange = evt => {
     let value = evt.target.value;
 
     // Digits only
-    if (/\D/.test(value)) {
+    if (!isDigitOrSpace(value)) {
       return;
     }
 
@@ -47,31 +52,107 @@ class Home extends Component {
     this.setState(state);
   };
 
+  handleFixedInputChange = evt => {
+    let input = evt.target.value;
+
+    let validFixedInput = this.validateFixedInput(input);
+
+    let state = this.state;
+    state.fixedInput.isValid = validFixedInput;
+
+    if (validFixedInput) {
+      let fixedNumbers = input.split(",").map(Number);
+      state.fixedInput.numbers = fixedNumbers;
+    } else {
+      state.fixedInput.numbers = [];
+    }
+
+    this.setState(state);
+  };
+
+  validateFixedInput = input => {
+    let numbers = input.split(",");
+
+    if (numbers.length === 0 || numbers.length > 5) {
+      return false;
+    }
+
+    // Fixed numbers must by all digits only
+    let digitsOnly = numbers.map(isDigitOrSpace).reduce((a, b) => a && b, true);
+    if (!digitsOnly) {
+      return false;
+    }
+
+    // 1 <= n <= 60
+    let betweenLimits = numbers
+      .map(n => n <= MEGA_SENA_MAX && n >= MEGA_SENA_MIN)
+      .reduce((a, b) => a && b);
+    if (!betweenLimits) {
+      return false;
+    }
+
+    return true;
+  };
+
+  showOptions = () => {
+    if (!this.state.showOptions) {
+      return;
+    }
+    return (
+      <div className="row">
+        <div className="col-12">
+          <p>
+            Incluir números fixos para aparecer nas apostas?{" "}
+            <input
+              id="fixed-input"
+              onChange={this.handleFixedInputChange}
+              className={this.state.fixedInput.isValid ? "" : "input-invalid"}
+            ></input>
+          </p>
+        </div>
+      </div>
+    );
+  };
+
+  handleShowOptions = () => {
+    console.log(this.state);
+    let state = this.state;
+    state.showOptions = !state.showOptions;
+    this.setState(state);
+  };
+
   generate = () => {
     let value = this.state.value;
 
     // Pick from 1 to 60
     let possibleNumbers = [];
     for (let j = MEGA_SENA_MIN; j <= MEGA_SENA_MAX; j++) {
-      possibleNumbers.push(j);
+      // If the number is already on the fixed input, we do not include it again.
+      if (this.state.fixedInput.numbers.indexOf(j) < 0) {
+        possibleNumbers.push(j);
+      }
     }
 
     let bets = [];
     // j = 6 means a 6 numbers bet, j = 7 means 7 numbers bet.
-    for (let j = CHOICES_MAX; j >= CHOICES_MIN && value >= 0; j--) {
-      let singleCost = binomial(j, CHOICES_MIN) * MEGA_SENA_VALUE;
+    for (
+      let choice = CHOICES_MAX;
+      choice >= CHOICES_MIN && value >= 0;
+      choice--
+    ) {
+      let singleCost = binomial(choice, CHOICES_MIN) * MEGA_SENA_VALUE;
 
       let currentNumberOfBets = Math.floor(value / singleCost);
 
-      // i = 2 means 2 bets of 6 numbers (or 7, or whatever j is)
+      // i = 2 means 2 bets of 6 numbers (or 7, or whatever `choice` is)
       // We also restrict to not generate bets smaller than 6 choices.
       for (
         let i = 0;
         i < currentNumberOfBets && possibleNumbers.length > CHOICES_MIN;
         i++
       ) {
-        let choices = [];
-        for (let k = 0; k < j && possibleNumbers.length > 0; k++) {
+        let choices = Object.create(this.state.fixedInput.numbers);
+        while (choices.length < choice && possibleNumbers.length > 0) {
           // Pick a random number
           let randomIndex = Math.floor(Math.random() * possibleNumbers.length);
           let choice = possibleNumbers[randomIndex];
@@ -85,7 +166,7 @@ class Home extends Component {
         // Better presentation of numbers. Sort asc.
         choices.sort((a, b) => a - b);
 
-        let distinctBets = binomial(j, CHOICES_MIN);
+        let distinctBets = binomial(choice, CHOICES_MIN);
 
         bets.push({
           choices: choices,
@@ -185,6 +266,19 @@ class Home extends Component {
         </div>
 
         {this.showTable()}
+
+        <div className="row" align="center">
+          <div className="col-12">
+            <button
+              onClick={this.handleShowOptions}
+              className="btn btn-secondary"
+            >
+              Opções
+            </button>
+          </div>
+        </div>
+
+        {this.showOptions()}
       </div>
     );
   }
@@ -193,5 +287,7 @@ class Home extends Component {
 var valueDisplay = value => {
   return "R$ " + value.toFixed(2);
 };
+
+var isDigitOrSpace = str => /^[0-9\s]*$/.test(str);
 
 export default Home;
