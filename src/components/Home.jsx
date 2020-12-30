@@ -9,7 +9,7 @@ import {
   CHOICES_MAX,
   MEGA_SENA_MIN,
   MEGA_SENA_MAX,
-  MEGA_SENA_VALUE
+  MEGA_SENA_VALUE,
 } from "../constants/mega.sena.constants";
 
 import binomial from "../functions/math.utils";
@@ -22,37 +22,14 @@ const maxBetValue =
   CHOICES_MAX;
 
 class Home extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      value: 0,
-      bets: [],
-      fixedInput: { numbers: [], isValid: true },
-      showOptions: false
-    };
-  }
-
-  handleValueChange = evt => {
-    let value = evt.target.value;
-
-    // Digits only
-    if (!isDigitOrSpace(value)) {
-      return;
-    }
-
-    value = Number(value);
-
-    if (value > maxBetValue) {
-      return;
-    }
-
-    let state = this.state;
-    state.value = Number(value);
-    this.setState(state);
+  state = {
+    value: MEGA_SENA_VALUE.toFixed(2),
+    bets: [],
+    fixedInput: { numbers: [], isValid: true },
+    showOptions: false,
   };
 
-  handleFixedInputChange = evt => {
+  handleFixedInputChange = (evt) => {
     let input = evt.target.value;
 
     let validFixedInput = this.validateFixedInput(input);
@@ -70,7 +47,7 @@ class Home extends Component {
     this.setState(state);
   };
 
-  validateFixedInput = input => {
+  validateFixedInput = (input) => {
     let numbers = input.split(",");
 
     if (numbers.length === 0 || numbers.length > 5) {
@@ -87,7 +64,7 @@ class Home extends Component {
 
     // 1 <= n <= 60
     let betweenLimits = numbers
-      .map(n => n <= MEGA_SENA_MAX && n >= MEGA_SENA_MIN)
+      .map((n) => n <= MEGA_SENA_MAX && n >= MEGA_SENA_MIN)
       .reduce((a, b) => a && b);
     if (!betweenLimits) {
       return false;
@@ -128,7 +105,8 @@ class Home extends Component {
     this.setState(state);
   };
 
-  generate = () => {
+  generate = (evt) => {
+    evt.preventDefault();
     let value = this.state.value;
 
     // Pick from 1 to 60
@@ -178,7 +156,7 @@ class Home extends Component {
         bets.push({
           choices: choices,
           cost: singleCost,
-          distinctBets: distinctBets
+          distinctBets: distinctBets,
         });
       }
 
@@ -197,11 +175,11 @@ class Home extends Component {
     }
 
     let totalCost = this.state.bets
-      .map(bet => bet.cost)
+      .map((bet) => bet.cost)
       .reduce((a, b) => a + b, 0);
 
     let distinctBets = this.state.bets
-      .map(bet => bet.distinctBets)
+      .map((bet) => bet.distinctBets)
       .reduce((a, b) => a + b, 0);
 
     return (
@@ -222,7 +200,7 @@ class Home extends Component {
             </tr>
           </thead>
           <tbody>
-            {this.state.bets.map(bet => (
+            {this.state.bets.map((bet) => (
               <tr key={bet.choices}>
                 <td>{bet.choices.join(", ")}</td>
                 <td>{bet.choices.length}</td>
@@ -246,7 +224,7 @@ class Home extends Component {
 
   render() {
     return (
-      <div className="container">
+      <form className="container">
         <div className="row">
           <div className="col-12" align="center">
             <h1>Gerador Mega Sena</h1>
@@ -258,9 +236,13 @@ class Home extends Component {
               Digite o valor da vaquinha: R${" "}
               <input
                 id="value-input"
-                size="6"
-                onChange={this.handleValueChange}
+                onChange={(evt) => this.setState({ value: evt.target.value })}
                 value={this.state.value}
+                min={MEGA_SENA_VALUE}
+                max={maxBetValue}
+                type="number"
+                step="0.01"
+                required
               ></input>
             </p>
           </div>
@@ -280,6 +262,7 @@ class Home extends Component {
             <button
               onClick={this.handleShowOptions}
               className="btn btn-secondary"
+              type="button"
             >
               Opções
             </button>
@@ -287,15 +270,15 @@ class Home extends Component {
         </div>
 
         {this.showOptions()}
-      </div>
+      </form>
     );
   }
 }
 
-var valueDisplay = value => {
+var valueDisplay = (value) => {
   return "R$ " + value.toFixed(2);
 };
 
-var isDigitOrSpace = str => /^[0-9\s]*$/.test(str);
+var isDigitOrSpace = (str) => /^[0-9\s]*$/.test(str);
 
 export default Home;
