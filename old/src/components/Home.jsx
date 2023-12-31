@@ -12,86 +12,7 @@ import {
   MEGA_SENA_VALUE,
 } from "../constants/mega.sena.constants";
 
-
 class Home extends Component {
-
-
-  handleFixedInputChange = (evt) => {
-    let input = evt.target.value;
-
-    let validFixedInput = this.validateFixedInput(input);
-
-    let state = this.state;
-    state.fixedInput.isValid = validFixedInput;
-
-    if (validFixedInput) {
-      let fixedNumbers = input.split(",").map(Number);
-      state.fixedInput.numbers = fixedNumbers;
-    } else {
-      state.fixedInput.numbers = [];
-    }
-
-    this.setState(state);
-  };
-
-  validateFixedInput = (input) => {
-    let numbers = input.split(",");
-
-    if (numbers.length === 0 || numbers.length > 5) {
-      return false;
-    }
-
-    // Fixed numbers must by all digits only
-    let digitsOnly = numbers.map(isDigitOrSpace).reduce((a, b) => a && b, true);
-    if (!digitsOnly) {
-      return false;
-    }
-
-    numbers = numbers.map(Number);
-
-    // 1 <= n <= 60
-    let betweenLimits = numbers
-      .map((n) => n <= MEGA_SENA_MAX && n >= MEGA_SENA_MIN)
-      .reduce((a, b) => a && b);
-    if (!betweenLimits) {
-      return false;
-    }
-
-    // Duplications
-    if (new Set(numbers).size !== numbers.length) {
-      return false;
-    }
-
-    return true;
-  };
-
-  showOptions = () => {
-    if (!this.state.showOptions) {
-      return;
-    }
-    return (
-      <div className="row">
-        <div className="col-12">
-          <p>
-            Incluir números fixos para aparecer nas apostas?{" "}
-            <input
-              id="fixed-input"
-              placeholder="1, 2, 3"
-              onChange={this.handleFixedInputChange}
-              className={this.state.fixedInput.isValid ? "" : "input-invalid"}
-            ></input>
-          </p>
-        </div>
-      </div>
-    );
-  };
-
-  handleShowOptions = () => {
-    let state = this.state;
-    state.showOptions = !state.showOptions;
-    this.setState(state);
-  };
-
   generate = (evt) => {
     evt.preventDefault();
     let value = this.state.value;
@@ -208,18 +129,10 @@ class Home extends Component {
       </div>
     );
   };
-
-  render() {
-    return (
-      
-    );
-  }
 }
 
 var valueDisplay = (value) => {
   return "R$ " + value.toFixed(2);
 };
-
-var isDigitOrSpace = (str) => /^[0-9\s]*$/.test(str);
 
 export default Home;
