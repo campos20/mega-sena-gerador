@@ -1,1 +1,0 @@
-{"version":3,"sources":["Home.css"],"names":[],"mappings":"AAAA,KACE,WACF,CAEA,eACE,oBACF","file":"main.7b91d53e.chunk.css","sourcesContent":[".row {\n  padding: 5px;\n}\n\n.input-invalid {\n  background-color: red;\n}\n"]}
