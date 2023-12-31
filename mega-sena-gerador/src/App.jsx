@@ -1,35 +1,29 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
+import React from "react";
+
+import { HashRouter, Link } from "react-router-dom";
 import "./App.css";
 
-function App() {
-  const [count, setCount] = useState(0);
-
+export const App = () => {
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div>
+      <HashRouter>
+        <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+          <div className="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul className="navbar-nav mr-auto">
+              <li className="nav-item">
+                <Link to="/" className="nav-link">
+                  Início
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link to="/sobre" className="nav-link">
+                  Sobre
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </HashRouter>
+    </div>
   );
-}
-
-export default App;
+};
