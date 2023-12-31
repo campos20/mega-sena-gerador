@@ -29,14 +29,17 @@ export const BetsTable = ({ bets }) => {
           </tr>
         </thead>
         <tbody>
-          {bets.map((bet) => (
-            <tr key={bet.choices}>
-              <td>{bet.choices.join(", ")}</td>
-              <td>{bet.choices.length}</td>
-              <td>{bet.distinctBets}</td>
-              <td>{valueDisplay(bet.cost)}</td>
-            </tr>
-          ))}
+          {bets
+            // Sort by distinct bets
+            .sort((a, b) => b.choices.length - a.choices.length)
+            .map((bet) => (
+              <tr key={bet.choices}>
+                <td>{bet.choices.join(", ")}</td>
+                <td>{bet.choices.length}</td>
+                <td>{bet.distinctBets}</td>
+                <td>{valueDisplay(bet.cost)}</td>
+              </tr>
+            ))}
         </tbody>
         <tfoot>
           <tr>

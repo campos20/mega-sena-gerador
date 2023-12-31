@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import { MEGA_SENA_MAX, MEGA_SENA_MIN } from "../constants";
 
-export const Options = ({ fixedInput, setFixedInput }) => {
+export const Options = ({ fixedInput, setFixedInput, setErrorMessage }) => {
   const [showOptions, setShowOptions] = useState(false);
   const [rawInput, setRawInput] = useState("");
 
@@ -10,11 +10,12 @@ export const Options = ({ fixedInput, setFixedInput }) => {
     setRawInput(value);
 
     if (!/[0-9,.]+/.test(value)) {
+      // We also silently accept '.', but whatever
+      setErrorMessage("Apenas números e vírgulas são aceitos");
+
       setFixedInput((old) => ({
         ...old,
         isValid: false,
-        // We also silently accept '.', but whatever
-        message: "Apenas números e vírgulas são aceitos",
         numbers: [],
       }));
       return;
@@ -27,10 +28,10 @@ export const Options = ({ fixedInput, setFixedInput }) => {
       .replace(/^,+/, ""); // Remove , from the beggining
 
     if (trimmed.length === 0) {
+      setErrorMessage("");
       setFixedInput((old) => ({
         ...old,
         isValid: true,
-        message: "",
         numbers: [],
       }));
       return;
@@ -39,11 +40,11 @@ export const Options = ({ fixedInput, setFixedInput }) => {
     const numbers = trimmed.split(",").map(Number);
 
     if (numbers.length > 5) {
+      setErrorMessage("Não é possível fixar mais do que 5 números");
       setFixedInput((old) => ({
         ...old,
         numbers: [],
         isValid: false,
-        message: "Não é possível fixar mais do que 5 números",
       }));
       return;
     }
@@ -53,30 +54,32 @@ export const Options = ({ fixedInput, setFixedInput }) => {
       .reduce((a, b) => a && b);
 
     if (!betweenLimits) {
+      setErrorMessage(
+        `Os valores devem estar entre ${MEGA_SENA_MIN} e ${MEGA_SENA_MAX}`
+      );
       setFixedInput((old) => ({
         ...old,
         numbers: [],
         isValid: false,
-        message: `Os valores devem estar entre ${MEGA_SENA_MIN} e ${MEGA_SENA_MAX}`,
       }));
       return;
     }
 
     const setNumbers = new Set(numbers);
     if (setNumbers.size !== numbers.length) {
+      setErrorMessage("Existem valores repetidos");
       setFixedInput((old) => ({
         ...old,
         numbers: [],
         isValid: false,
-        message: "Existem valores repetidos",
       }));
       return;
     }
 
+    setErrorMessage("");
     setFixedInput((old) => ({
       ...old,
       isValid: true,
-      message: "",
       numbers,
     }));
   };

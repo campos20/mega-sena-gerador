@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { BetsTable } from "../components/BetsTable";
+import { Options } from "../components/Options";
 import {
   CHOICES_MAX,
   CHOICES_MIN,
@@ -8,21 +9,26 @@ import {
   MEGA_SENA_MIN,
   MEGA_SENA_VALUE,
 } from "../constants";
-import { binomial } from "../math.functions";
-import { Options } from "../components/Options";
+import { binomial, valueDisplay } from "../math.functions";
 
 export const HomePage = () => {
   const [value, setValue] = useState(MEGA_SENA_VALUE.toFixed(2));
   const [bets, setBets] = useState([]);
+  const [errorMessage, setErrorMessage] = useState("");
   const [fixedInput, setFixedInput] = useState({
     numbers: [],
     isValid: true,
-    message: "",
   });
 
   const handleGenerate = (evt) => {
     evt.preventDefault();
 
+    if (value > MAX_BET_VALUE) {
+      setErrorMessage(`O valor máximo é ${valueDisplay(MAX_BET_VALUE)}`);
+      return;
+    }
+
+    setErrorMessage("");
     let newValue = value;
 
     // Pick from 1 to 60
@@ -48,7 +54,9 @@ export const HomePage = () => {
         // We also restrict to not generate bets smaller than 6 choices.
         for (
           let i = 0;
-          i < currentNumberOfBets && possibleNumbers.length > CHOICES_MIN;
+          i < currentNumberOfBets &&
+          possibleNumbers.length > CHOICES_MIN &&
+          newValue > 0;
           i++
         ) {
           let choices = Object.create(fixedInput.numbers);
@@ -68,15 +76,16 @@ export const HomePage = () => {
           // Better presentation of numbers. Sort asc.
           choices.sort((a, b) => a - b);
 
-          let distinctBets = binomial(choice, CHOICES_MIN);
-          newValue -= distinctBets * MEGA_SENA_VALUE;
+          let distinctBets = binomial(choices.length, CHOICES_MIN);
+          let currentCost = distinctBets * MEGA_SENA_VALUE;
+          newValue -= currentCost;
 
           newBetsAdded = true;
 
           newBets.push({
-            choices: choices,
-            cost: singleCost,
-            distinctBets: distinctBets,
+            choices,
+            cost: currentCost,
+            distinctBets,
           });
         }
       }
@@ -89,17 +98,29 @@ export const HomePage = () => {
       // In case we run out of possible numbers but we still have cash to spent,
       // We take 1 number from each bet
       // This fixes part of the 'some clever intersections' mentioned above.
-      if (newValue > 0 && possibleNumbers.length < CHOICES_MIN) {
+      while (newValue > 0 && possibleNumbers.length <= CHOICES_MIN) {
+        let someToAdd = false;
         for (let i = 0; i < newBets.length; i++) {
           const bet = newBets[i].choices;
 
-          // Pick a random number
-          let randomIndex = Math.floor(Math.random() * bet.length);
-          let choice = bet[randomIndex];
+          const availableToAdd = bet.filter(
+            (b) => !possibleNumbers.includes(b)
+          );
 
-          if (possibleNumbers.indexOf(choice) < 0) {
-            possibleNumbers.push(choice);
+          if (availableToAdd.length === 0) {
+            continue;
           }
+
+          someToAdd = true;
+
+          // Pick a random number
+          let randomIndex = Math.floor(Math.random() * availableToAdd.length);
+          let choice = availableToAdd[randomIndex];
+
+          possibleNumbers.push(choice);
+        }
+        if (!someToAdd) {
+          break;
         }
       }
     }
@@ -140,8 +161,16 @@ export const HomePage = () => {
           </div>
         </div>
 
+        {errorMessage.length > 0 && (
+          <p className="alert alert-danger">{errorMessage}</p>
+        )}
+
         <BetsTable bets={bets} />
-        <Options fixedInput={fixedInput} setFixedInput={setFixedInput} />
+        <Options
+          fixedInput={fixedInput}
+          setFixedInput={setFixedInput}
+          setErrorMessage={setErrorMessage}
+        />
       </form>
     </div>
   );
