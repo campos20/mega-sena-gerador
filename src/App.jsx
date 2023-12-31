@@ -1,12 +1,15 @@
 import React from "react";
-import Home from "./components/Home";
-import Sobre from "./components/Sobre";
 
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { HashRouter, Link, Route, Routes } from "react-router-dom";
 
-function App() {
+import { AboutPage } from "../src/pages/AboutPage";
+import { HomePage } from "../src/pages/HomePage";
+
+import "bootstrap/dist/css/bootstrap.min.css";
+
+export const App = () => {
   return (
-    <Router>
+    <HashRouter>
       <div>
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
@@ -17,7 +20,7 @@ function App() {
                 </Link>
               </li>
               <li className="nav-item">
-                <Link to="/sobre" className="nav-link">
+                <Link to="/about" className="nav-link">
                   Sobre
                 </Link>
               </li>
@@ -25,17 +28,11 @@ function App() {
           </div>
         </nav>
 
-        <Switch>
-          <Route path="/sobre">
-            <Sobre />
-          </Route>
-          <Route path="/">
-            <Home />
-          </Route>
-        </Switch>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/about" element={<AboutPage />} />
+        </Routes>
       </div>
-    </Router>
+    </HashRouter>
   );
-}
-
-export default App;
+};
