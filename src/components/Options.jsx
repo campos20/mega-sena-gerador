@@ -101,7 +101,7 @@ export const Options = ({ fixedInput, setFixedInput }) => {
             fixedInput.isValid ? "alert m-1" : "alert alert-danger m-1"
           }
         >
-          Incluir números fixos para aparecer nas apostas?{" "}
+          Incluir números fixos para aparecer nas apostas?
           <input
             id="fixed-input"
             placeholder="1, 2, 3"
