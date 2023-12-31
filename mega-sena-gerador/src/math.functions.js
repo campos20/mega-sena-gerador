@@ -15,3 +15,5 @@ export const validateFixedInput = (input) => {
   }
   return true;
 };
+
+export const valueDisplay = (value) => "R$ " + value.toFixed(2);
