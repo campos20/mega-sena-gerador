@@ -2,7 +2,8 @@ import React from "react";
 
 import { HashRouter, Link, Route, Routes } from "react-router-dom";
 
-import { AboutPage } from "../src/pages/about/AboutPage";
+import { AboutPage } from "../src/pages/AboutPage";
+import { HomePage } from "../src/pages/HomePage";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -26,6 +27,7 @@ export const App = () => {
         </nav>
 
         <Routes>
+          <Route path="/" element={<HomePage />} />
           <Route path="/about" element={<AboutPage />} />
         </Routes>
       </HashRouter>
