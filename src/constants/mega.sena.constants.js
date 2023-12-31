@@ -5,4 +5,4 @@ export const MEGA_SENA_MIN = 1;
 export const MEGA_SENA_MAX = 60;
 
 // TODO fetch from some API
-export const MEGA_SENA_VALUE = 4.5; // R$ 4,50
+export const MEGA_SENA_VALUE = 5; // R$ 5,00
