@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { BetsTable } from "../components/BetsTable";
 import {
   CHOICES_MAX,
   CHOICES_MIN,
@@ -7,10 +8,10 @@ import {
   MEGA_SENA_MIN,
   MEGA_SENA_VALUE,
 } from "../constants";
-import { valueDisplay, binomial } from "../math.functions";
+import { binomial } from "../math.functions";
 
 export const HomePage = () => {
-  const [value, setValue] = MEGA_SENA_VALUE.toFixed(2);
+  const [value, setValue] = useState(MEGA_SENA_VALUE.toFixed(2));
   const [bets, setBets] = useState([]);
   const [fixedInput, setFixedInput] = useState({
     numbers: [],
@@ -91,6 +92,7 @@ export const HomePage = () => {
         isValid: false,
         // We also silently accept '.', but whatever
         message: "Apenas números e vírgulas são aceitos",
+        numbers: [],
       }));
       return;
     }
@@ -102,7 +104,12 @@ export const HomePage = () => {
       .replace(/^,+/, ""); // Remove , from the beggining
 
     if (trimmed.length === 0) {
-      setFixedInput((old) => ({ ...old, isValid: true, message: "" }));
+      setFixedInput((old) => ({
+        ...old,
+        isValid: true,
+        message: "",
+        numbers: [],
+      }));
       return;
     }
 
@@ -111,6 +118,7 @@ export const HomePage = () => {
     if (numbers.length > 5) {
       setFixedInput((old) => ({
         ...old,
+        numbers: [],
         isValid: false,
         message: "Não é possível fixar mais do que 5 números",
       }));
@@ -124,6 +132,7 @@ export const HomePage = () => {
     if (!betweenLimits) {
       setFixedInput((old) => ({
         ...old,
+        numbers: [],
         isValid: false,
         message: `Os valores devem estar entre ${MEGA_SENA_MIN} e ${MEGA_SENA_MAX}`,
       }));
@@ -134,6 +143,7 @@ export const HomePage = () => {
     if (setNumbers.size !== numbers.length) {
       setFixedInput((old) => ({
         ...old,
+        numbers: [],
         isValid: false,
         message: "Existem valores repetidos",
       }));
@@ -146,57 +156,6 @@ export const HomePage = () => {
       message: "",
       numbers,
     }));
-  };
-
-  const showTable = () => {
-    if (bets.length === 0) {
-      return <></>;
-    }
-
-    let totalCost = bets.map((bet) => bet.cost).reduce((a, b) => a + b, 0);
-
-    let distinctBets = bets
-      .map((bet) => bet.distinctBets)
-      .reduce((a, b) => a + b, 0);
-
-    return (
-      <div className="text-center">
-        <table className="table table-striped table-bordered table-hover table-condensed">
-          <thead className="thead-dark">
-            <tr>
-              <th className="align-middle" scope="col">
-                Jogo
-              </th>
-              <th className="align-middle" scope="col">
-                Tamanho
-              </th>
-              <th>Jogos distintos</th>
-              <th className="align-middle" scope="col">
-                Custo
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {bets.map((bet) => (
-              <tr key={bet.choices}>
-                <td>{bet.choices.join(", ")}</td>
-                <td>{bet.choices.length}</td>
-                <td>{bet.distinctBets}</td>
-                <td>{valueDisplay(bet.cost)}</td>
-              </tr>
-            ))}
-          </tbody>
-          <tfoot>
-            <tr>
-              <th></th>
-              <th>Total</th>
-              <th>{distinctBets}</th>
-              <th>{valueDisplay(totalCost)}</th>
-            </tr>
-          </tfoot>
-        </table>
-      </div>
-    );
   };
 
   return (
@@ -232,7 +191,7 @@ export const HomePage = () => {
           </div>
         </div>
 
-        {showTable()}
+        <BetsTable bets={bets} />
 
         <div className="row" align="center">
           <div className="col-12">
