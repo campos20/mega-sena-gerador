@@ -12,22 +12,9 @@ import {
   MEGA_SENA_VALUE,
 } from "../constants/mega.sena.constants";
 
-import binomial from "../functions/math.utils";
-
-// For now, we do not allow very large values for bets, only about 100k.
-const maxBetValue =
-  (binomial(CHOICES_MAX, CHOICES_MIN) *
-    MEGA_SENA_VALUE *
-    (MEGA_SENA_MAX - MEGA_SENA_MIN + 1)) /
-  CHOICES_MAX;
 
 class Home extends Component {
-  state = {
-    value: MEGA_SENA_VALUE.toFixed(2),
-    bets: [],
-    fixedInput: { numbers: [], isValid: true },
-    showOptions: false,
-  };
+
 
   handleFixedInputChange = (evt) => {
     let input = evt.target.value;
@@ -224,53 +211,7 @@ class Home extends Component {
 
   render() {
     return (
-      <form className="container">
-        <div className="row">
-          <div className="col-12" align="center">
-            <h1>Gerador Mega Sena</h1>
-          </div>
-        </div>
-        <div className="row">
-          <div className="col-12" align="center">
-            <p>
-              Digite o valor da vaquinha: R${" "}
-              <input
-                id="value-input"
-                onChange={(evt) => this.setState({ value: evt.target.value })}
-                value={this.state.value}
-                min={MEGA_SENA_VALUE}
-                max={maxBetValue}
-                type="number"
-                step="0.01"
-                required
-              ></input>
-            </p>
-          </div>
-        </div>
-        <div className="row" align="center">
-          <div className="col-12">
-            <button onClick={this.generate} className="btn btn-primary">
-              Gerar
-            </button>
-          </div>
-        </div>
-
-        {this.showTable()}
-
-        <div className="row" align="center">
-          <div className="col-12">
-            <button
-              onClick={this.handleShowOptions}
-              className="btn btn-secondary"
-              type="button"
-            >
-              Opções
-            </button>
-          </div>
-        </div>
-
-        {this.showOptions()}
-      </form>
+      
     );
   }
 }

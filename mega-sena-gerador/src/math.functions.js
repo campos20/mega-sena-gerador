@@ -8,3 +8,10 @@ const factorial = (n) => {
 export const binomial = (n, p) => {
   return factorial(n) / factorial(p) / factorial(n - p);
 };
+
+export const validateFixedInput = (input) => {
+  if (!/\d+/.test(input)) {
+    return false;
+  }
+  return true;
+};
