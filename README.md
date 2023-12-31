@@ -1,9 +1,20 @@
+# mega-sena-gerador
+
+Gera vaquinhas para a mega sena.
+
+## Requirements
+
+- `nvm` ou a [versão correta](.nvmrc) do node.
+
 ## Build
 
-- `git clone https://github.com/campos20/mega-sena-gerador.git`
-- `cd mega-sena-gerador`
-- `npm install`
-- `npm run dev`
+```bash
+git clone https://github.com/campos20/mega-sena-gerador.git
+cd mega-sena-gerador
+nvm use
+npm install
+npm run dev
+```
 
 Abra [http://localhost:5173](http://localhost:5173) para visualizar.
 
