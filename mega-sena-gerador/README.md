@@ -1,8 +1,18 @@
-# React + Vite
+## Build
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+- `git clone https://github.com/campos20/mega-sena-gerador.git`
+- `cd mega-sena-gerador`
+- `npm install`
+- `npm run dev`
 
-Currently, two official plugins are available:
+Abra [http://localhost:5173](http://localhost:5173) para visualizar.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Tecnologias
+
+- React
+- React router
+- Vite
+
+## Live
+
+Abra [https://campos20.github.io/mega-sena-gerador](https://campos20.github.io/mega-sena-gerador) para um demo.
