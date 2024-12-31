@@ -2,6 +2,7 @@
   "name": "mega-sena-gerador",
   "private": true,
   "version": "0.0.0",
+  "homepage": "https://campos20.github.io/mega-sena-gerador/",
   "type": "module",
   "scripts": {
     "dev": "vite",
