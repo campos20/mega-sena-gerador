@@ -16,7 +16,7 @@ npm install
 npm run dev
 ```
 
-Abra [http://localhost:5173](http://localhost:5173) para visualizar.
+Abra [http://localhost:3000](http://localhost:3000) para visualizar.
 
 ## Tecnologias
 
